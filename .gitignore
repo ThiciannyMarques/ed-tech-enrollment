@@ -1,0 +1,162 @@
+# 🏗️ DEPENDÊNCIAS
+# Ignora todas as dependências instaladas
+node_modules/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# 🌿 AMBIENTE E VARIÁVEIS
+# Arquivos de ambiente e configurações sensíveis
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+.env.staging
+.venv/
+
+# 📦 ARQUIVOS DE BUILD/COMPILAÇÃO
+# Resultados de compilação e distribuição
+dist/
+build/
+.serverless/
+.next/
+out/
+.nuxt/
+.cache/
+.vite/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 🧪 TESTES E COBERTURA
+# Relatórios de testes e cobertura
+coverage/
+.nyc_output/
+*.lcov
+*.xunit
+*.tap
+test-results/
+junit.xml
+
+# 📝 LOGS E TEMPORÁRIOS
+# Logs de execução e arquivos temporários
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.pid
+*.seed
+*.pid.lock
+*.sock
+*.tmp
+*.temp
+.DS_Store
+
+# 🛠️ CONFIGURAÇÕES DE IDE/EDITOR
+# Configurações específicas de IDEs e editores
+.vscode/
+.idea/
+.history/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*.vscodeignore
+*.code-workspace
+
+# 🗄️ BANCOS DE DADOS
+# Arquivos de bancos de dados locais e dumps
+*.db
+*.db-journal
+*.sqlite
+*.sql
+*.dump
+*.mdb
+*.sdb
+*.ldb
+*.frm
+*.ibd
+*.myi
+*.myd
+*.ib_logfile*
+
+# 🧹 CACHE E PACOTES
+# Cache de pacotes e dependências
+.cache/
+.temp/
+.tmp/
+.npm/
+.yarn-integrity
+.pnp.*
+*.tgz
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# 🔍 LINTERS E FORMATADORES
+# Cache e arquivos de linters
+.eslintcache
+.stylelintcache
+.prettierignore
+.tern-project
+
+# 📊 DOCUMENTAÇÃO GERADA
+# Arquivos de documentação auto-gerada
+docs/api/
+docs/coverage/
+storybook-static/
+typedoc/
+
+# 🖼️ ASSETS OTIMIZADOS
+# Assets processados/otimizados
+/src/assets/optimized/
+/src/assets/compressed/
+
+# 🧩 MÓDULOS DO VUE
+# Cache específico do Vue
+.vuepress/dist/
+.vuepress/cache/
+
+# 🔥 SERVER-SPECIFIC
+# Arquivos específicos do backend Node.js
+server/uploads/
+server/storage/
+server/logs/
+server/.nyc_output/
+server/.env.local
+server/.env.test
+server/.env.production
+
+# 🎨 CLIENT-SPECIFIC
+# Arquivos específicos do frontend Vue.js
+client/.env.local
+client/.env.test
+client/.env.production
+client/.vite/
+client/.vitepress/
+client/.vitepress/cache/
+
+# 🏗️ MIGRAÇÕES E SEEDS (OPCIONAL)
+# Descomente se estiver usando migrações no backend
+# server/src/database/migrations/*
+# !server/src/database/migrations/.keep
+# server/src/database/seeds/*
+# !server/src/database/seeds/.keep
+
+# 🚨 EXCEÇÕES (NUNCA IGNORAR ESTES)
+# Arquivos importantes que nunca devem ser ignorados
+!.gitkeep
+!.dockerignore
+!.editorconfig
+!.gitattributes
