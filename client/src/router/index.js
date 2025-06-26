@@ -1,28 +1,39 @@
-import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
-import { routes } from 'vue-router/auto-routes'
+import { createRouter, createWebHistory } from 'vue-router'
+import StudentList from '@/views/Students/StudentList.vue'
+import StudentForm from '@/views/Students/StudentForm.vue'
+import AcademicModule from '@/views/AcademicModule.vue'
+
+const routes = [
+  {
+    path: '/',
+    name: 'AcademicModule',
+    component: AcademicModule,
+  },
+  {
+    path: '/students',
+    name: 'StudentList',
+    component: StudentList,
+  },
+  {
+    path: '/students/create',
+    name: 'StudentCreate',
+    component: StudentForm,
+  },
+  {
+    path: '/students/edit/:ra',
+    name: 'StudentEdit',
+    component: StudentForm,
+    props: true,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/students',
+  },
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: setupLayouts(routes),
-})
-
-router.onError((err, to) => {
-  if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
-    if (localStorage.getItem('vuetify:dynamic-reload')) {
-      console.error('Dynamic import error, reloading page did not fix it', err)
-    } else {
-      console.log('Reloading page to fix dynamic import error')
-      localStorage.setItem('vuetify:dynamic-reload', 'true')
-      location.assign(to.fullPath)
-    }
-  } else {
-    console.error(err)
-  }
-})
-
-router.isReady().then(() => {
-  localStorage.removeItem('vuetify:dynamic-reload')
+  routes,
 })
 
 export default router
