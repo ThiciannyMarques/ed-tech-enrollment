@@ -5,7 +5,7 @@
         <v-text-field
           v-model="searchTerm"
           append-icon="mdi-magnify"
-          :label="$t('pesquisar')"
+          :label="$t('search')"
           single-line
           hide-details
           class="mr-4"
@@ -14,7 +14,7 @@
         <v-spacer />
 
         <v-btn color="primary" :to="{ name: 'StudentCreate' }" prepend-icon="mdi-plus">
-          {{ $t('Cadastrar estudante') }}
+          {{ $t('register') }}
         </v-btn>
       </v-card-title>
 
@@ -22,8 +22,8 @@
         :students="studentStore.students"
         :loading="studentStore.loading"
         :search="searchTerm"
-        @edit="navigateToEdit"
-        @delete="openDeleteConfirmation"
+        @edit="handleEditStudent"
+        @delete="openDeleteDialog"
       />
 
       <confirmation-dialog
@@ -31,7 +31,7 @@
         :title="$t('confirmation.title')"
         :message="$t('confirmation.deleteMessage')"
         :loading="isDeleting"
-        @confirm="handleStudentDeletion"
+        @confirm="confirmDeleteStudent"
         @cancel="closeDeleteDialog"
       />
     </v-card>
@@ -51,47 +51,48 @@ const studentStore = useStudentStore()
 const searchTerm = ref('')
 const isDeleteDialogOpen = ref(false)
 const isDeleting = ref(false)
-const selectedStudentRa = ref(null)
+const studentRaToDelete = ref(null)
 
-const loadStudents = async () => {
+const fetchStudents = async () => {
   try {
     await studentStore.fetchStudents()
-  } catch {
-    throw new Error('Falha ao carregar alunos.')
+  } catch (error) {
+    handleError('Failed to load students.', error)
   }
 }
 
-const navigateToEdit = (ra) => {
+const handleEditStudent = (ra) => {
   router.push({ name: 'StudentEdit', params: { ra } })
 }
 
-const openDeleteConfirmation = (ra) => {
-  selectedStudentRa.value = ra
+const openDeleteDialog = (ra) => {
+  studentRaToDelete.value = ra
   isDeleteDialogOpen.value = true
 }
 
 const closeDeleteDialog = () => {
   isDeleteDialogOpen.value = false
-  selectedStudentRa.value = null
+  studentRaToDelete.value = null
 }
 
-const handleStudentDeletion = async () => {
-  if (!selectedStudentRa.value) return
+const confirmDeleteStudent = async () => {
+  if (!studentRaToDelete.value) return
 
   isDeleting.value = true
-
   try {
-    await studentStore.deleteStudent(selectedStudentRa.value)
-  } catch {
-    throw new Error('Erro ao deletar aluno.')
+    await studentStore.deleteStudent(studentRaToDelete.value)
+  } catch (error) {
+    handleError('Failed to delete student.', error)
   } finally {
+    await fetchStudents()
     isDeleting.value = false
-    await loadStudents()
     closeDeleteDialog()
   }
 }
 
-onMounted(() => {
-  loadStudents()
-})
+const handleError = (message, error) => {
+  throw new Error(message, { cause: error })
+}
+
+onMounted(fetchStudents)
 </script>
