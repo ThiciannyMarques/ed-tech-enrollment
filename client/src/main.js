@@ -5,6 +5,7 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import i18n from './plugins/i18n'
 import './api/api'
+import './assets/main.css'
 
 const app = createApp(App)
 

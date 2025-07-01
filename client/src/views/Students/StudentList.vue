@@ -4,8 +4,9 @@
       <v-card-title class="d-flex align-center">
         <v-text-field
           v-model="searchTerm"
-          append-icon="mdi-magnify"
+          prepend-inner-icon="mdi-magnify"
           :label="$t('search')"
+          variant="outlined"
           single-line
           hide-details
           class="mr-4"
@@ -13,8 +14,13 @@
 
         <v-spacer />
 
-        <v-btn color="primary" :to="{ name: 'StudentCreate' }" prepend-icon="mdi-plus">
-          {{ $t('register') }}
+        <v-btn
+          color="secondary"
+          class="text-surface"
+          :to="{ name: 'StudentCreate' }"
+          prepend-icon="mdi-plus"
+        >
+          Cadastrar Aluno
         </v-btn>
       </v-card-title>
 
@@ -24,6 +30,7 @@
         :search="searchTerm"
         @edit="handleEditStudent"
         @delete="openDeleteDialog"
+        @refresh="fetchStudents"
       />
 
       <confirmation-dialog

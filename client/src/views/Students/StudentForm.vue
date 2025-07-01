@@ -1,45 +1,77 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-card-title>
-        {{ isEdit ? 'Editar Aluno' : 'Novo Aluno' }}
+  <v-container class="py-6">
+    <v-card class="pa-6 rounded-xl">
+      <v-card-title class="text-h5 font-weight-bold d-flex mb-4">
+        <v-icon class="mr-4" color="secondary">mdi-school</v-icon>
+        {{ isEdit ? 'Editar Aluno' : 'Cadastrar Novo Aluno' }}
       </v-card-title>
-      <v-card-text>
-        <v-form @submit.prevent="handleSubmit" ref="formRef">
-          <v-text-field
-            v-model="form.ra"
-            label="RA"
-            :disabled="isEdit"
-            :rules="[required]"
-            :error-messages="errors.ra"
-            @input="clearError('ra')"
-          />
-          <v-text-field
-            v-model="form.name"
-            label="Nome"
-            :rules="[required, minLength(3)]"
-            :error-messages="errors.name"
-            @input="clearError('name')"
-          />
-          <v-text-field
-            v-model="form.email"
-            label="E-mail"
-            :rules="[required, emailRules]"
-            :error-messages="errors.email"
-            @input="clearError('email')"
-          />
-          <v-text-field
-            v-model="cpfFormatted"
-            label="CPF"
-            :disabled="isEdit"
-            :rules="[required, cpfRules]"
-            :error-messages="errors.cpf"
-            @input="handleCpfInput"
-          />
-          <v-btn type="submit" color="primary" :loading="loading">Salvar</v-btn>
-          <v-btn class="ml-2" @click="handleCancel" :disabled="loading">Cancelar</v-btn>
-        </v-form>
-      </v-card-text>
+
+      <v-form ref="formRef" @submit.prevent="handleSubmit">
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="form.ra"
+              label="RA (6 dígitos)"
+              :disabled="isEdit"
+              :rules="[required, raRules]"
+              :error-messages="errors.ra"
+              maxlength="6"
+              type="text"
+              outlined
+              density="comfortable"
+              prepend-inner-icon="mdi-numeric"
+              @update:model-value="onRaInput"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="form.name"
+              label="Nome"
+              :rules="[required, minLength(3)]"
+              :error-messages="errors.name"
+              outlined
+              density="comfortable"
+              prepend-inner-icon="mdi-account"
+              @input="clearError('name')"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="form.email"
+              label="E-mail"
+              :rules="[required, emailRules]"
+              :error-messages="errors.email"
+              outlined
+              density="comfortable"
+              prepend-inner-icon="mdi-email"
+              @input="clearError('email')"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="cpfFormatted"
+              label="CPF"
+              :disabled="isEdit"
+              :rules="[required, cpfRules]"
+              :error-messages="errors.cpf"
+              outlined
+              density="comfortable"
+              prepend-inner-icon="mdi-card-account-details"
+              @input="handleCpfInput"
+            />
+          </v-col>
+        </v-row>
+
+        <div class="d-flex justify-end mt-6">
+          <v-btn type="submit" color="primary" :loading="loading" class="me-2" variant="flat">
+            Salvar
+          </v-btn>
+          <v-btn :disabled="loading" variant="tonal" @click="handleCancel"> Cancelar </v-btn>
+        </div>
+      </v-form>
     </v-card>
   </v-container>
 </template>
@@ -74,60 +106,87 @@ const errors = ref({
 })
 
 const cpfFormatted = ref('')
-
 const isEdit = computed(() => !!route.params.ra)
 
 const required = (value) => !!value || 'Campo obrigatório'
 const minLength = (length) => (value) => value.length >= length || `Mínimo de ${length} caracteres`
-const emailRules = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || 'E-mail inválido'
+
+const emailRules = (value) => {
+  if (!value) return 'E-mail é obrigatório'
+  const atIndex = value.indexOf('@')
+  const dotIndex = value.lastIndexOf('.')
+  return (atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < value.length - 1) || 'E-mail inválido'
+}
+
+const raRules = (value) => {
+  if (!value) return 'RA é obrigatório'
+  if (value.length !== 6) return 'RA deve conter exatamente 6 números'
+  return !isNaN(value) || 'RA deve conter apenas números'
+}
+
 const cpfRules = (value) => {
   const cleaned = value.replace(/\D/g, '')
-
   if (!cleaned) return 'CPF é obrigatório'
   if (cleaned.length !== 11) return 'CPF deve ter 11 dígitos'
-  if (!/^\d+$/.test(cleaned)) return 'CPF deve conter apenas números'
+  if (isNaN(cleaned)) return 'CPF deve conter apenas números'
 
-  // Valida dígitos repetidos (111.111.111-11)
-  if (/^(\d)\1{10}$/.test(cleaned)) return 'CPF inválido'
-
-  // Valida sequências comuns (123.456.789-09)
-  if (cleaned === '12345678909') return 'CPF inválido'
-
-  // Cálculo dos dígitos verificadores (algoritmo oficial)
-  let sum = 0
-  let remainder
-
-  for (let i = 1; i <= 9; i++) {
-    sum += parseInt(cleaned.substring(i - 1, i)) * (11 - i)
+  let allSame = true
+  for (let i = 1; i < cleaned.length; i++) {
+    if (cleaned[i] !== cleaned[0]) {
+      allSame = false
+      break
+    }
   }
+  if (allSame) return 'CPF inválido'
 
-  remainder = (sum * 10) % 11
-  if (remainder === 10 || remainder === 11) remainder = 0
-  if (remainder !== parseInt(cleaned.substring(9, 10))) return 'CPF inválido'
+  let sum = 0
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cleaned[i]) * (10 - i)
+  }
+  let remainder = (sum * 10) % 11
+  if (remainder === 10) remainder = 0
+  if (remainder !== parseInt(cleaned[9])) return 'CPF inválido'
 
   sum = 0
-  for (let i = 1; i <= 10; i++) {
-    sum += parseInt(cleaned.substring(i - 1, i)) * (12 - i)
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cleaned[i]) * (11 - i)
   }
-
   remainder = (sum * 10) % 11
-  if (remainder === 10 || remainder === 11) remainder = 0
-  if (remainder !== parseInt(cleaned.substring(10, 11))) return 'CPF inválido'
+  if (remainder === 10) remainder = 0
+  if (remainder !== parseInt(cleaned[10])) return 'CPF inválido'
 
   return true
 }
 
-function formatCpf(value) {
-  const digits = value.replace(/\D/g, '')
-  return digits
-    .replace(/^(\d{3})(\d)/, '$1.$2')
-    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-    .replace(/\.(\d{3})(\d)/, '.$1-$2')
-    .slice(0, 14)
+function onRaInput(value) {
+  let digitsOnly = ''
+  for (const char of value) {
+    if (char >= '0' && char <= '9') {
+      digitsOnly += char
+    }
+  }
+  form.value.ra = digitsOnly.length <= 6 ? digitsOnly : digitsOnly.slice(0, 6)
+  clearError('ra')
 }
 
-function clearError(field) {
-  errors.value[field] = ''
+function formatCpf(value) {
+  let digits = ''
+  for (const char of value) {
+    if (char >= '0' && char <= '9') {
+      digits += char
+    }
+  }
+
+  let formatted = ''
+  for (let i = 0; i < digits.length && i < 11; i++) {
+    if (i === 3 || i === 6) {
+      formatted += '.'
+    } else if (i === 9) {
+      formatted += '-'
+    }
+    formatted += digits[i]
+  }
+  return formatted
 }
 
 function handleCpfInput(e) {
@@ -135,8 +194,30 @@ function handleCpfInput(e) {
 }
 
 watch(cpfFormatted, (newVal) => {
-  form.value.cpf = newVal.replace(/\D/g, '')
+  let digitsOnly = ''
+  for (const char of newVal) {
+    if (char >= '0' && char <= '9') {
+      digitsOnly += char
+    }
+  }
+  form.value.cpf = digitsOnly
 })
+
+function clearError(field) {
+  errors.value[field] = ''
+}
+
+function sanitizeInput(input) {
+  if (typeof input !== 'string') return input
+
+  const dangerousChars = [';', '"', "'", '\\', '--', '/*', '*/', '<', '>', '=', '(', ')']
+  let sanitized = input
+  dangerousChars.forEach((char) => {
+    sanitized = sanitized.split(char).join('')
+  })
+
+  return sanitized.trim()
+}
 
 async function handleSubmit() {
   loading.value = true
@@ -145,33 +226,29 @@ async function handleSubmit() {
     if (!valid) return
 
     const payload = {
-      name: form.value.name,
-      email: form.value.email,
+      name: sanitizeInput(form.value.name),
+      email: sanitizeInput(form.value.email),
     }
 
     if (isEdit.value) {
       await studentStore.updateStudent(route.params.ra, payload)
     } else {
-      payload.ra = form.value.ra
-      payload.cpf = form.value.cpf
+      payload.ra = sanitizeInput(form.value.ra)
+      payload.cpf = sanitizeInput(form.value.cpf)
       await studentStore.createStudent(payload)
     }
 
     router.push('/students')
   } catch (error) {
-    handleApiErrors(error)
+    if (error.response?.data?.errors) {
+      error.response.data.errors.forEach(({ path, msg }) => {
+        if (errors.value[path] !== undefined) errors.value[path] = msg
+      })
+    } else {
+      showSnackbar({ message: 'Erro ao salvar', color: 'error' })
+    }
   } finally {
     loading.value = false
-  }
-}
-
-function handleApiErrors(error) {
-  if (error.response?.data?.errors) {
-    error.response.data.errors.forEach(({ path, msg }) => {
-      if (errors.value[path] !== undefined) errors.value[path] = msg
-    })
-  } else {
-    showSnackbar({ message: 'Erro ao salvar', color: 'error' })
   }
 }
 
@@ -179,9 +256,7 @@ function handleCancel() {
   router.push('/students')
 }
 
-onMounted(loadStudentIfEdit)
-
-async function loadStudentIfEdit() {
+onMounted(async () => {
   if (!isEdit.value) return
   loading.value = true
   try {
@@ -199,5 +274,5 @@ async function loadStudentIfEdit() {
   } finally {
     loading.value = false
   }
-}
+})
 </script>

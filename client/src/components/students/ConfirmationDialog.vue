@@ -11,10 +11,10 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="secondary" :disabled="loading" @click="$emit('cancel')">
-          {{ $t('general.cancel') }}
+          {{ $t('cancel') }}
         </v-btn>
         <v-btn color="primary" :loading="loading" @click="confirm">
-          {{ $t('general.confirm') }}
+          {{ $t('confirm') }}
         </v-btn>
       </v-card-actions>
     </v-card>
