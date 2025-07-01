@@ -7,6 +7,13 @@
           Módulo Acadêmico
         </router-link>
       </v-toolbar-title>
+
+      <v-spacer />
+
+      <v-btn @click="logout" color="error" text>
+        <v-icon left>mdi-logout</v-icon>
+        Sair
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer app color="black">
@@ -39,33 +46,46 @@
 </template>
 
 <script>
+import { useAuthStore } from '../stores/auth'
+import { watch, ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
 export default {
   name: 'AcademicModule',
-  data() {
-    return {
-      selectedItem: 0,
-      menuItems: [
-        {
-          title: 'Alunos',
-          icon: 'mdi-account-school-outline',
-          route: 'StudentList',
-        },
-      ],
+  setup() {
+    const auth = useAuthStore()
+    const route = useRoute()
+    const selectedItem = ref(0)
+    const menuItems = ref([
+      {
+        title: 'Alunos',
+        icon: 'mdi-account-school-outline',
+        route: 'StudentList',
+      },
+    ])
+
+    function updateSelectedItem(currentRoute) {
+      const index = menuItems.value.findIndex((item) => item.route === currentRoute.name)
+      selectedItem.value = index >= 0 ? index : null
     }
-  },
-  watch: {
-    $route(to) {
-      this.updateSelectedItem(to)
-    },
-  },
-  created() {
-    this.updateSelectedItem(this.$route)
-  },
-  methods: {
-    updateSelectedItem(route) {
-      const index = this.menuItems.findIndex((item) => item.route === route.name)
-      this.selectedItem = index >= 0 ? index : null
-    },
+
+    onMounted(() => {
+      updateSelectedItem(route)
+    })
+
+    watch(route, (to) => {
+      updateSelectedItem(to)
+    })
+
+    const logout = () => {
+      auth.logout()
+    }
+
+    return {
+      selectedItem,
+      menuItems,
+      logout,
+    }
   },
 }
 </script>

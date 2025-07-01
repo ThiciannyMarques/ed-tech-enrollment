@@ -223,7 +223,14 @@ async function handleSubmit() {
   loading.value = true
   try {
     const { valid } = await formRef.value.validate()
-    if (!valid) return
+    if (!valid) {
+      loading.value = false
+      return
+    }
+
+    Object.keys(errors.value).forEach((key) => {
+      errors.value[key] = ''
+    })
 
     const payload = {
       name: sanitizeInput(form.value.name),
@@ -238,20 +245,36 @@ async function handleSubmit() {
       await studentStore.createStudent(payload)
     }
 
+    showSnackbar({
+      message: isEdit.value ? 'Aluno atualizado com sucesso!' : 'Aluno cadastrado com sucesso!',
+      color: 'success',
+    })
     router.push('/students')
   } catch (error) {
-    if (error.response?.data?.errors) {
-      error.response.data.errors.forEach(({ path, msg }) => {
-        if (errors.value[path] !== undefined) errors.value[path] = msg
-      })
-    } else {
-      showSnackbar({ message: 'Erro ao salvar', color: 'error' })
+    const errorMatch = error.message.match(/\{.*\}/)
+    if (errorMatch) {
+      const errorData = JSON.parse(errorMatch[0])
+      if (errorData?.errors) {
+        errorData.errors.forEach(({ path, msg }) => {
+          if (path in errors.value) {
+            errors.value[path] = msg
+          }
+        })
+        showSnackbar({
+          message: 'Corrija os erros no formulário',
+          color: 'error',
+        })
+        return
+      }
     }
+    showSnackbar({
+      message: 'Erro ao salvar os dados do aluno',
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }
 }
-
 function handleCancel() {
   router.push('/students')
 }

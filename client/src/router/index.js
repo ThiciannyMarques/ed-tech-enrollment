@@ -1,12 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AcademicModule from '../views/AcademicModule'
-import StudentList from '../views/Students/StudentList.vue'
-import StudentForm from '../views/Students/StudentForm.vue'
+import { useAuthStore } from '../stores/auth'
 
 const routes = [
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/Auth/LoginView.vue'),
+    meta: { public: true },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/Auth/RegisterView.vue'),
+    meta: { public: true },
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('../views/Auth/ResetPasswordView.vue'),
+    meta: { public: true },
+  },
+  {
     path: '/',
-    component: AcademicModule,
+    component: () => import('../views/AcademicModule.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
@@ -16,24 +33,23 @@ const routes = [
       {
         path: 'students',
         name: 'StudentList',
-        component: StudentList,
+        component: () => import('../views/Students/StudentList.vue'),
+        meta: { roles: ['admin'] },
       },
       {
         path: 'students/create',
         name: 'StudentCreate',
-        component: StudentForm,
+        component: () => import('../views/Students/StudentForm.vue'),
+        meta: { roles: ['admin'] },
       },
       {
         path: 'students/edit/:ra',
         name: 'StudentEdit',
-        component: StudentForm,
+        component: () => import('../views/Students/StudentForm.vue'),
+        meta: { roles: ['admin'] },
         props: true,
       },
     ],
-  },
-  {
-    path: '/',
-    redirect: '/',
   },
   {
     path: '/:pathMatch(.*)*',
@@ -44,6 +60,27 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+  console.log('Navigating to:', authStore.userRole)
+  if (to.meta.public) {
+    return next()
+  }
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return next('/login')
+  }
+
+  if (to.meta.roles) {
+    const userRole = authStore.userRole
+    if (!userRole || !to.meta.roles.includes(userRole)) {
+      return next('/')
+    }
+  }
+
+  next()
 })
 
 export default router
