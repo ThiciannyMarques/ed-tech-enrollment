@@ -64,7 +64,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  console.log('Navigating to:', authStore.userRole)
   if (to.meta.public) {
     return next()
   }

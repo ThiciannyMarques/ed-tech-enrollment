@@ -16,6 +16,12 @@ export default defineFlatConfig([
         sourceType: 'module',
         requireConfigFile: false,
       },
+      globals: {
+        window: 'readonly',
+        localStorage: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+      },
     },
     plugins: {
       vue,

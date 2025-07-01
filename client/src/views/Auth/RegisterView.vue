@@ -38,12 +38,12 @@
                 prepend-icon="mdi-lock"
                 :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :type="showPassword ? 'text' : 'password'"
-                @click:append="showPassword = !showPassword"
                 :rules="[
                   (v) => !!v || 'Campo obrigatório',
                   (v) => v.length >= 6 || 'Mínimo 6 caracteres',
                 ]"
                 required
+                @click:append="showPassword = !showPassword"
               />
 
               <v-alert v-if="auth.error" type="error" class="mt-3">

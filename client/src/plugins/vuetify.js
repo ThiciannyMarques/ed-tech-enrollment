@@ -48,4 +48,9 @@ export default createVuetify({
       darken: 3,
     },
   },
+  defaults: {
+    VContainer: {
+      class: 'pa-0',
+    },
+  },
 })

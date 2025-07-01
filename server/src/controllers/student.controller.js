@@ -15,8 +15,6 @@ const handleValidationErrors = (req, res, next) => {
 
 const createStudent = async (req, res, next) => {
   try {
-    console.log('Dados recebidos:', req.body);
-
     const student = await studentService.createStudent(req.body);
 
     if (!student || student.length === 0) {
@@ -28,7 +26,6 @@ const createStudent = async (req, res, next) => {
       data: student[0],
     });
   } catch (err) {
-    console.error('Erro no createStudent:', err);
     next(err);
   }
 };

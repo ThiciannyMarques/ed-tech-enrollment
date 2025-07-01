@@ -62,7 +62,6 @@ module.exports = {
         res.status(201).send({ token });
 
     } catch (error) {
-        console.error('Registration error:', error);
         res.status(500).send({ 
         error: 'Registration failed',
         details: error.message
@@ -74,17 +73,14 @@ module.exports = {
     const { username, newPassword } = req.body;
 
     try {
-        // Verifica se o usuário existe
         const user = await knex('users').where({ username }).first();
         if (!user) {
         return res.status(404).send({ error: 'Usuário não encontrado' });
         }
 
-        // Gera um novo hash para a senha
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // Atualiza a senha no banco
         await knex('users')
         .where({ id: user.id })
         .update({ password: hashedPassword });

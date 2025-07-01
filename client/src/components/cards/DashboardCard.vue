@@ -1,9 +1,9 @@
 <template>
-  <v-col :cols="12" :sm="4" class="flex-lg-1-0-0 px-1">
+  <v-col cols="12" sm="6" lg="4" class="pa-1">
     <v-card class="gradient-card pt-2 pb-1 ps-1" elevation="4">
-      <v-card-title class="text-h6 text-white">
-        {{ title }}
-        <v-icon left color="secondary" class="float-end">{{ icon }}</v-icon>
+      <v-card-title class="text-h6 text-white d-flex justify-space-between align-center">
+        <span class="text-subtitle-1 text-sm-h6">{{ title }}</span>
+        <v-icon color="secondary" size="small">{{ icon }}</v-icon>
       </v-card-title>
 
       <v-card-text class="pa-1 text-white">
@@ -11,9 +11,15 @@
       </v-card-text>
 
       <v-card-actions v-if="showActions" class="pa-1">
-        <v-btn variant="text" color="white" small @click="navigate">
+        <v-btn
+          variant="text"
+          color="white"
+          size="small"
+          class="text-caption text-sm-body-2"
+          @click="navigate"
+        >
           {{ actionText }}
-          <v-icon right small>mdi-chevron-right</v-icon>
+          <v-icon right size="small">mdi-chevron-right</v-icon>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -24,8 +30,14 @@
 const props = defineProps({
   title: String,
   icon: String,
-  showActions: Boolean,
-  actionText: String,
+  showActions: {
+    type: Boolean,
+    default: false,
+  },
+  actionText: {
+    type: String,
+    default: 'Ver mais',
+  },
   route: Object,
 })
 
@@ -43,6 +55,13 @@ const navigate = () => {
   background: linear-gradient(135deg, #000000, #2c3b48);
   color: white;
   border-radius: 8px;
-  height: 14rem;
+  height: 100%;
+  min-height: 180px;
+}
+
+@media (max-width: 600px) {
+  .gradient-card {
+    min-height: 160px;
+  }
 }
 </style>
