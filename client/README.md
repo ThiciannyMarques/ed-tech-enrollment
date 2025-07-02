@@ -1,80 +1,130 @@
-# Vuetify (Default)
+```markdown
+# 🖥️ Frontend EdTech Enrollment
 
-This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
+Aplicação Vue.js para gestão de matrículas estudantis com interface moderna e responsiva.
 
-## ❗️ Important Links
+## 🚀 Primeiros Passos
 
-- 📄 [Docs](https://vuetifyjs.com/)
-- 🚨 [Issues](https://issues.vuetifyjs.com/)
-- 🏬 [Store](https://store.vuetifyjs.com/)
-- 🎮 [Playground](https://play.vuetifyjs.com/)
-- 💬 [Discord](https://community.vuetifyjs.com)
+### Pré-requisitos
+- Node.js v18+
+- NPM v9+
 
-## 💿 Install
-
-Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
-
-| Package Manager                                           | Command        |
-| --------------------------------------------------------- | -------------- |
-| [yarn](https://yarnpkg.com/getting-started)               | `yarn install` |
-| [npm](https://docs.npmjs.com/cli/v7/commands/npm-install) | `npm install`  |
-| [pnpm](https://pnpm.io/installation)                      | `pnpm install` |
-| [bun](https://bun.sh/#getting-started)                    | `bun install`  |
-
-After completing the installation, your environment is ready for Vuetify development.
-
-## ✨ Features
-
-- 🖼️ **Optimized Front-End Stack**: Leverage the latest Vue 3 and Vuetify 3 for a modern, reactive UI development experience. [Vue 3](https://v3.vuejs.org/) | [Vuetify 3](https://vuetifyjs.com/en/)
-- 🗃️ **State Management**: Integrated with [Pinia](https://pinia.vuejs.org/), the intuitive, modular state management solution for Vue.
-- 🚦 **Routing and Layouts**: Utilizes Vue Router for SPA navigation and vite-plugin-vue-layouts for organizing Vue file layouts. [Vue Router](https://router.vuejs.org/) | [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
-- ⚡ **Next-Gen Tooling**: Powered by Vite, experience fast cold starts and instant HMR (Hot Module Replacement). [Vite](https://vitejs.dev/)
-- 🧩 **Automated Component Importing**: Streamline your workflow with unplugin-vue-components, automatically importing components as you use them. [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
-
-These features are curated to provide a seamless development experience from setup to deployment, ensuring that your Vuetify application is both powerful and maintainable.
-
-## 💡 Usage
-
-This section covers how to start the development server and build your project for production.
-
-### Starting the Development Server
-
-To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000):
-
-```bash
-yarn dev
+# Instale as dependências
+npm install
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+## ⚙️ Configuração
 
-> Add NODE_OPTIONS='--no-warnings' to suppress the JSON import warnings that happen as part of the Vuetify import mapping. If you are on Node [v21.3.0](https://nodejs.org/en/blog/release/v21.3.0) or higher, you can change this to NODE_OPTIONS='--disable-warning=5401'. If you don't mind the warning, you can remove this from your package.json dev script.
+Crie um arquivo `.env` na pasta `client` (baseado no `.env.example`):
 
-### Building for Production
-
-To build your project for production, use:
-
-```bash
-yarn build
+```env
+VITE_API_URL=http://localhost:3001/api
+VITE_APP_TITLE="EdTech Enrollment"
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+## 🏃 Executando o Projeto
 
-Once the build process is completed, your application will be ready for deployment in a production environment.
+```bash
+# Servidor de desenvolvimento (hot-reload)
+npm run dev
 
-## 💪 Support Vuetify Development
+## 📂 Estrutura do Projeto
 
-This project is built with [Vuetify](https://vuetifyjs.com/en/), a UI Library with a comprehensive collection of Vue components. Vuetify is an MIT licensed Open Source project that has been made possible due to the generous contributions by our [sponsors and backers](https://vuetifyjs.com/introduction/sponsors-and-backers/). If you are interested in supporting this project, please consider:
+```
+src/
+├── api/              # Chamada de api
+├── assets/           # Ícones, imagens e fonts
+├── components/       # Componentes reutilizáveis
+│   ├── academic/
+│   └── cards/       # Componentes específicos de cards
+│   └── forms/       # Componentes específicos de forms
+│   └── snackBar/    # Componentes específicos de snackBar
+│   └── students/    # Componentes específicos de alunos
 
-- [Requesting Enterprise Support](https://support.vuetifyjs.com/)
-- [Sponsoring John on Github](https://github.com/users/johnleider/sponsorship)
-- [Sponsoring Kael on Github](https://github.com/users/kaelwd/sponsorship)
-- [Supporting the team on Open Collective](https://opencollective.com/vuetify)
-- [Becoming a sponsor on Patreon](https://www.patreon.com/vuetify)
-- [Becoming a subscriber on Tidelift](https://tidelift.com/subscription/npm/vuetify)
-- [Making a one-time donation with Paypal](https://paypal.me/vuetify)
+├── composables/     # Lógica reutilizável
+├── router/          # Configuração de rotas
+├── stores/          # Gerenciamento de estado (Pinia)
+│   └── student.js   # Store para gestão de alunos
+│   └── auth.js      # Store para gestão de autenticação
+│   └── snackBar.js  # Store para gestão da snackBar
 
-## 📑 License
+├── styles/          # Estilos globais e variáveis
+└── views/           # Páginas principais
+    ├── Students/    # Páginas relacionadas a alunos
+    └── Home.vue     # Página inicial
+```
 
-[MIT](http://opensource.org/licenses/MIT)
+## 🎨 Componentes Principais
 
-Copyright (c) 2016-present Vuetify, LLC
+### `StudentList.vue`
+- Data table com paginação
+- Filtros por nome/RA
+- Ações (editar/excluir)
+
+### `StudentForm.vue`
+- Formulário reutilizável (create/edit)
+- Validação em tempo real
+- Máscaras para CPF/RA
+
+### `AppLayout.vue`
+- Layout base da aplicação
+- Barra de navegação responsiva
+- Sistema de temas (claro/escuro)
+
+## 🔌 Integração com API
+
+Configuração do Axios em `src/api/api.js`:
+
+```javascript
+import axios from 'axios'
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 10000
+})
+
+// Interceptores para tratamento global de erros
+api.interceptors.response.use(
+  response => response,
+  error => {
+    // Tratamento personalizado de erros
+    return Promise.reject(error)
+  }
+)
+
+export default api
+```
+
+## 🎛️ Variáveis de Ambiente
+
+| Variável | Descrição | Padrão |
+|----------|-----------|--------|
+| `VITE_API_URL` | URL base da API | `http://localhost:3001/api` |
+| `VITE_APP_TITLE` | Título da aplicação | `EdTech Enrollment` |
+
+## 🛠️ Comandos Disponíveis
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Inicia servidor de desenvolvimento |
+| `npm run build` | Constrói para produção |
+| `npm run lint` | Executa ESLint |
+| `npm run format` | Formata código com Prettier |
+
+## 📱 Responsividade
+
+A aplicação possui 3 breakpoints principais:
+
+1. **Mobile**: < 600px
+   - Menu hamburguer
+   - Cards em coluna única
+
+2. **Tablet**: 600px - 960px
+   - Layout de 2 colunas
+   - Tamanhos de fonte ajustados
+
+3. **Desktop**: > 960px
+   - Menu lateral fixo
+   - Data tables completas
+
+```

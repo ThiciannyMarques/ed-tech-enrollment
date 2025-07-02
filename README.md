@@ -32,6 +32,9 @@ Execute as migrações:
 
 ```bash
 cd server
+
+# Criar arquivo de ambiente
+cp .env-example .env
 npx knex migrate:latest
 
 
@@ -56,7 +59,7 @@ DB_NAME=edtech
 Siga os passos 2-4 do método com Docker
 
 🌐 URLs de Acesso
-API: http://localhost:3000
+API: http://localhost:3001
 
 Frontend: http://localhost:8080
 
